@@ -14,8 +14,13 @@ and open the template in the editor.
         <link href="css.css" type="text/css" rel="stylesheet">
     </head>
     <body>
-        <div><object data="Irkutsk_Oblast.svg" type="image/svg+xml" id="imap"></object>
-            <div class="answer">Ваш ответ:<br/><input id="ans" type="text" size="25"/><button id="check">проверить</button></div>
+        <script>function mytest(){
+            var a = document.getElementById("imap").contentWindow.document.getElementById("Alar").id;
+            console.log(a);
+        }
+        </script>
+        <div><object data="Irkutsk_Oblast.svg"  id="imap" onload="mytest()"></object>
+            <div class="answer" id="answer">Ваш ответ:<br/><input id="ans" type="text" size="25"/><button id="check">проверить</button></div>
         </div>
          
     </body>

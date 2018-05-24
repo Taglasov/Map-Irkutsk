@@ -3,24 +3,64 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+var flag = false;
+window.evt = "a";
+var mass = [];
+
+
 $(function() {
     $(".region").click(ValueColorclick);
     $(".region").mouseover(ValueColorover);
     $(".region").mouseout(ValueColorout);
+    $("#check").click(check);
+    
 });
-
 function ValueColorclick(click_evt){
-    var st = click_evt.target.style;
-    st.fill = "rgb(128, 128, 128)";
-    st.opacity = 1;
+    window.evt = "b";
+    var st1;
+    if (flag == true){
+        st1 = mass[0];
+        if(st1.target.id!=click_evt.target.id){
+            st1.target.style.fill = "none";
+            st1.target.style.opacity = 1;
+            mass.pop();
+            mass.push(click_evt);
+            var st = click_evt.target.style;
+            st.fill = "rgb(128, 128, 128)";
+            st.opacity = 1;
+            alert(st1.target.id);
+        }
+    }
+    //if (flag == true) alert(click_evt.target.id + "," + st1.target.id);
+    
+    
+    if (flag == false){
+        mass.push(click_evt); 
+        var st = click_evt.target.style;
+        st.fill = "rgb(128, 128, 128)";
+        st.opacity = 1;
+        flag = true;
+    }
+    
+    document.getElementById("answer").focus();
     document.getElementById("ans").focus();
     /*var s = $(this).attr('synonym');
     $("#check").click(check);*/
+    
 }
 
 function check(){
-    alert("hello");
-    /*alert($(this).attr('synonym'));*/
+    /*if (flag==true){
+        alert("true");
+    }
+    else alert("false");*/
+    alert(mass.pop());
+    
+    document.getElementById("ans").focus();
+    var a = document.getElementById("ans").value;
+    /*alert(evt.attr('synonym'));*/
+    
+   
 }
 
 function ValueColorover(click_evt){
