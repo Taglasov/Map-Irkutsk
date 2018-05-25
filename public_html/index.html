@@ -9,18 +9,19 @@ and open the template in the editor.
         <title>TODO supply a title</title>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <script src="jquery-3.2.1.min.js" type="text/javascript"></script>
+        <script src="jquery-3.3.1.js" type="text/javascript"></script>
         <script src="js.js" type="text/javascript"></script>
         <link href="css.css" type="text/css" rel="stylesheet">
     </head>
     <body>
-        <script>function mytest(){
-            var a = document.getElementById("imap").contentWindow.document.getElementById("Alar").id;
-            console.log(a);
-        }
-        </script>
-        <div><object data="Irkutsk_Oblast.svg"  id="imap" onload="mytest()"></object>
-            <div class="answer" id="answer">Ваш ответ:<br/><input id="ans" type="text" size="25"/><button id="check">проверить</button></div>
+        
+        <div><object data="Irkutsk_Oblast.svg" type="image/svg+xml" id="imap"></object>
+            <div class="answer">Ваш ответ:<br/><input id="ans" type="text" size="25"/>
+                <button class="check1" id="check">проверить</button>
+                <div id="answer1"></div>
+                <div id="answer2"></div>
+            </div>
+            <button id="start">старт</button>
         </div>
          
     </body>

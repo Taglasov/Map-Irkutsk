@@ -14,9 +14,16 @@ and open the template in the editor.
     height: 300px;
     margin-top: 5%;
     margin-right: 10%;
-    border: 2px solid black;
     padding: 10px
 }
 #check{
     margin-left: 10px;
+}
+#answer1{
+    margin-top: 20px;
+}
+#start{
+    position: absolute;
+    top: 50%;
+    left: 70%;
 }
