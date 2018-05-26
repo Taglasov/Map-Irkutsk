@@ -8,13 +8,11 @@ and open the template in the editor.
     Author     : user
 */
 .answer{
-    float: right;
+    position: absolute;
+    top: 5%;
+    left: 60%;
+    width: 30%;
     font-size: 20px;
-    width: 25%;
-    height: 300px;
-    margin-top: 5%;
-    margin-right: 10%;
-    padding: 10px
 }
 #check{
     margin-left: 10px;
@@ -22,8 +20,16 @@ and open the template in the editor.
 #answer1{
     margin-top: 20px;
 }
-#start{
+.buttons{
     position: absolute;
-    top: 50%;
-    left: 70%;
+    top: 80%;
+    left: 50%;
 }
+#result{
+    position: absolute;
+    top: 40%;
+    left: 60%;
+    width: 30%;
+    font-size: 20px;
+}
+

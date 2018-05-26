@@ -8,48 +8,46 @@ var mass = [];
 var synon=[];
 var regions = [];
 var mainindex = 0;
+var countright = 0;
 var divanswer1;
 var divanswer2;
+var divresult;
 window.onload = function() {
     var imap = document.getElementById("imap").contentDocument;
     var reg = imap.getElementsByClassName("region");
-    
     for (var i = 0; i < reg.length; i++) {
         regions.push(reg[i]);
     }
     regions = shuffle(regions);
-    //for (var i = 0; i < regions.length; i++) {
-    //   alert(regions[i].id);
-    //}
+    divanswer1 = document.getElementById("answer1");
+    divanswer2 = document.getElementById("answer2");
+    divresult = document.getElementById("result");
     document.getElementById("start").onclick = Play;
-    //$(".region").click(ValueColorclick);
-    //$(".region").mouseover(ValueColorover);
-    //$(".region").mouseout(ValueColorout);
-    
-    //for (var i = 0; i < reg.length; i++) {
-    //    imap.getElementsByClassName("region")[i].onmouseover = ValueColorover;
-    //    imap.getElementsByClassName("region")[i].onmouseout = ValueColorout;
-    //    imap.getElementsByClassName("region")[i].onclick = ValueColorclick;
-    //};
-    
+    for (var i = 0; i < reg.length; i++) {
+        if (i<mainindex){
+            imap.getElementsByClassName("region")[i].onmouseover = Answer;
+        }
+    }
 };
 
 function Play(){
-    regions[mainindex].style.fill = "rgb(128, 128, 128)";
-    setTimeout(Input, 1000);
-}
-function Input(){
-    divanswer1 = document.getElementById("answer1");
-    divanswer2 = document.getElementById("answer2");
+    if (mainindex==regions.length) {
+        Result();
+    }
     divanswer1.innerHTML=""; 
     divanswer2.innerHTML="";
     document.getElementById("ans").value="";
+    regions[mainindex].style.fill = "rgb(128, 128, 128)";
+    regions[mainindex].style.opacity = 0.3;
+    document.getElementById("end").onclick = Result;
+    setTimeout(Input, 1000);
+}
+function Input(){
     document.getElementById("ans").focus();
     document.getElementById("check").onclick = checking;
 }
 function checking(evt){
     //alert(regions[mainindex].getAttribute("synonym"));
-    
     var input = document.getElementById("ans").value.toLowerCase();
     var synonyms = [];
     synonyms = regions[mainindex].getAttribute("synonym").split(',');
@@ -59,6 +57,8 @@ function checking(evt){
             divanswer1.innerHTML="Совершенно верно!";
             divanswer2.innerHTML = "Это "+regions[mainindex].getAttribute('rightanswer');
             regions[mainindex].style.fill = "rgb(0, 128, 0)";
+            regions[mainindex].style.opacity = 0.3;
+            countright++;
             break;
         }
         else {
@@ -67,12 +67,13 @@ function checking(evt){
                 divanswer1.innerHTML="Вы ошиблись!";
                 divanswer2.innerHTML = "Правильный ответ: "+regions[mainindex].getAttribute('rightanswer');
                 regions[mainindex].style.fill = "rgb(255, 0, 0)";
+                regions[mainindex].style.opacity = 0.3;
                 break;
             }
         }
     }
     mainindex++;
-    setTimeout(Play, 1000);
+    setTimeout(Play, 2000);
 }
 function shuffle(array) {
     var currentIndex = array.length, temporaryValue, randomIndex;
@@ -86,87 +87,15 @@ function shuffle(array) {
     return array;
 }
 
-/*function ValueColorclick(click_evt){
-    var st1;
-    if (flag == true){
-        st1 = mass[0];
-        if(st1.target.id!=click_evt.target.id){
-            st1.target.style.fill = "none";
-            st1.target.style.opacity = 1;
-            mass.pop();
-            mass.push(click_evt);
-            var st = click_evt.target.style;
-            st.fill = "rgb(128, 128, 128)";
-            st.opacity = 1;
-            synon=[];
-            var a = $(this).attr('synonym');
-            synon = a.split(",");
-            
-        }
-    }
-    //if (flag == true) alert(click_evt.target.id + "," + st1.target.id);
-    if (flag == false){
-        mass.push(click_evt); 
-        var st = click_evt.target.style;
-        st.fill = "rgb(128, 128, 128)";
-        st.opacity = 1;
-        flag = true;
-        synon=[];
-        var a = $(this).attr('synonym');
-        synon = a.split(",");
-        
-    }
-    
-    //document.getElementById("answer").focus();
-    
-    document.getElementById("ans").focus();
-    var s = $(this).attr('synonym');
-    $("#check").click(check);
-    document.getElementById("check").onclick = check;
-}*/
-/*function check(click_evt){
-    var divanswer1 = document.getElementById("answer1");
-    var divanswer2 = document.getElementById("answer2");
-    divanswer1.innerHTML=""; 
-    divanswer2.innerHTML="";
-    var input = document.getElementById("ans").value.toLowerCase();
-    for (var i = 0; i < synon.length; i++) {
-        if (input === synon[i]){
-            divanswer1.style.color = "green";
-            divanswer1.innerHTML="Совершенно верно";
-            mass[0].target.style.fill = "rgb(0, 128, 0)";
-            break;
-        }
-        else {
-            if(i == synon.length-1 && input != synon[i]){
-                divanswer1.style.color = "red";
-                divanswer1.innerHTML="Вы ошиблись!";
-                divanswer2.innerHTML = "Правильный ответ: "+mass[0].target.getAttribute('rightanswer');
-                mass[0].target.style.fill = "rgb(255, 0, 0)";
-            }
-        }
-    }
-    
-    alert(evt.attr('synonym'));
-    
-   
-}*/
+function Result(){
+    divresult.innerHTML = "Результат: вы отгадали правильно "+countright+" из "+mainindex;
+}
 
-function ValueColorover(click_evt){
-    var st = click_evt.target.style;
-    if (st.fill == "none"){
-        st.fill = "rgb(128, 128, 0)";
-        st.opacity = 0.2;
-    }
+function Answer(){
     
 }
-function ValueColorout(click_evt){
-    var st = click_evt.target.style;
-    if (st.opacity == 0.2){
-        st.fill = "none";
-        st.opacity = 1;
-    }
-}
+
+
 
 
 
