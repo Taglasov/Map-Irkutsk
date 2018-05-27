@@ -29,7 +29,12 @@ and open the template in the editor.
     position: absolute;
     top: 40%;
     left: 60%;
-    width: 30%;
+    width: 28%;
     font-size: 20px;
 }
+#help {
+    position:absolute; top:0; left:0;  
+    background: white; opacity:1;
+}
+
 

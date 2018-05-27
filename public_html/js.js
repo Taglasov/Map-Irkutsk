@@ -9,10 +9,9 @@ var synon=[];
 var regions = [];
 var mainindex = 0;
 var countright = 0;
-var divanswer1;
-var divanswer2;
-var divresult;
+var divanswer1, divanswer2, divresult, a;
 window.onload = function() {
+    //localStorage.clear();
     var imap = document.getElementById("imap").contentDocument;
     var reg = imap.getElementsByClassName("region");
     for (var i = 0; i < reg.length; i++) {
@@ -22,32 +21,51 @@ window.onload = function() {
     divanswer1 = document.getElementById("answer1");
     divanswer2 = document.getElementById("answer2");
     divresult = document.getElementById("result");
-    document.getElementById("start").onclick = Play;
-    for (var i = 0; i < reg.length; i++) {
-        if (i<mainindex){
-            imap.getElementsByClassName("region")[i].onmouseover = Answer;
-        }
-    }
+    $("#replay").click(goReload);
+    $("#menu").click(goMenu);
+    Play();
 };
 
 function Play(){
-    if (mainindex==regions.length) {
+    for (var i = 0; i < regions.length; i++) {
+        if (i<mainindex){
+            regions[i].onmousemove = Helpon;
+            regions[i].onmouseout = Helpoff;
+        }
+    }
+    if (mainindex==regions.length){
         Result();
     }
-    divanswer1.innerHTML=""; 
+    if (flag){
+        return;
+    }
+    divanswer1.innerHTML="";
     divanswer2.innerHTML="";
     document.getElementById("ans").value="";
     regions[mainindex].style.fill = "rgb(128, 128, 128)";
     regions[mainindex].style.opacity = 0.3;
     document.getElementById("end").onclick = Result;
+    
     setTimeout(Input, 1000);
+    
+}
+function Helpon(click_evt){
+    document.getElementById("help").innerHTML=click_evt.target.getAttribute('rightanswer');
+    $("#help").show();
+    $("#help").css('left',(click_evt.pageX+20)+'px').css('top',(click_evt.pageY+20)+'px');  
+    
+    //alert(click_evt.target.getAttribute('rightanswer'));
+}
+function Helpoff(){
+    $("#help").hide();
 }
 function Input(){
     document.getElementById("ans").focus();
     document.getElementById("check").onclick = checking;
 }
 function checking(evt){
-    //alert(regions[mainindex].getAttribute("synonym"));
+    if (flag)
+        return;
     var input = document.getElementById("ans").value.toLowerCase();
     var synonyms = [];
     synonyms = regions[mainindex].getAttribute("synonym").split(',');
@@ -59,6 +77,9 @@ function checking(evt){
             regions[mainindex].style.fill = "rgb(0, 128, 0)";
             regions[mainindex].style.opacity = 0.3;
             countright++;
+            if(localStorage.right<countright || localStorage.right==undefined){
+                localStorage.right=countright;
+            }
             break;
         }
         else {
@@ -73,6 +94,9 @@ function checking(evt){
         }
     }
     mainindex++;
+    if (mainindex==regions.length) {
+        flag=true;
+    }
     setTimeout(Play, 2000);
 }
 function shuffle(array) {
@@ -88,12 +112,20 @@ function shuffle(array) {
 }
 
 function Result(){
-    divresult.innerHTML = "Результат: вы отгадали правильно "+countright+" из "+mainindex;
+    
+    if(localStorage.right== undefined) a=countright;
+    else a = localStorage.right;
+    divresult.innerHTML = "Результат: вы отгадали правильно "+countright+" из "+mainindex+". Ваш лучший результат: "+a;
+    flag=true;
 }
 
-function Answer(){
-    
+function goReload(){
+    location.reload();
 }
+function goMenu(){
+    location.href = "start.html";
+}
+
 
 
 
