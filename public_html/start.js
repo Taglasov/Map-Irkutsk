@@ -6,9 +6,8 @@
 
 $(function(){
     $("#play").click(goPlay);
-    
     function goPlay()
     {
-        location.href = "play.html";
+        location.href = "play1.html";
     }
 });

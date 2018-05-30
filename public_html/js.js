@@ -9,13 +9,19 @@ var synon=[];
 var regions = [];
 var mainindex = 0;
 var countright = 0;
-var divanswer1, divanswer2, divresult, a;
+var divanswer1, divanswer2, divresult, res;
+var flagtry = 0;
 window.onload = function() {
     //localStorage.clear();
     var imap = document.getElementById("imap").contentDocument;
     var reg = imap.getElementsByClassName("region");
+    var city = imap.getElementsByClassName("city");
     for (var i = 0; i < reg.length; i++) {
         regions.push(reg[i]);
+    }
+    for (var i = 0; i<city.length; i++){
+        
+        regions.push(city[i]);
     }
     regions = shuffle(regions);
     divanswer1 = document.getElementById("answer1");
@@ -27,6 +33,7 @@ window.onload = function() {
 };
 
 function Play(){
+    
     for (var i = 0; i < regions.length; i++) {
         if (i<mainindex){
             regions[i].onmousemove = Helpon;
@@ -43,22 +50,18 @@ function Play(){
     divanswer2.innerHTML="";
     document.getElementById("ans").value="";
     regions[mainindex].style.fill = "rgb(128, 128, 128)";
-    regions[mainindex].style.opacity = 0.3;
+    if (regions[mainindex].getAttribute("class") == "region"){
+        regions[mainindex].style.opacity = 0.3;
+    }
+    if (regions[mainindex].getAttribute("class") == "city"){
+        regions[mainindex].style.opacity = 1;
+    }
     document.getElementById("end").onclick = Result;
     
     setTimeout(Input, 1000);
     
 }
-function Helpon(click_evt){
-    document.getElementById("help").innerHTML=click_evt.target.getAttribute('rightanswer');
-    $("#help").show();
-    $("#help").css('left',(click_evt.pageX+20)+'px').css('top',(click_evt.pageY+20)+'px');  
-    
-    //alert(click_evt.target.getAttribute('rightanswer'));
-}
-function Helpoff(){
-    $("#help").hide();
-}
+
 function Input(){
     document.getElementById("ans").focus();
     document.getElementById("check").onclick = checking;
@@ -66,29 +69,86 @@ function Input(){
 function checking(evt){
     if (flag)
         return;
+    var clas = regions[mainindex].getAttribute("class");
     var input = document.getElementById("ans").value.toLowerCase();
     var synonyms = [];
     synonyms = regions[mainindex].getAttribute("synonym").split(',');
     for (var i = 0; i < synonyms.length; i++) {
-        if (input === synonyms[i]){
+        if (levenshtein(input, synonyms[i])==0 && flagtry==0){
             divanswer1.style.color = "green";
             divanswer1.innerHTML="Совершенно верно!";
             divanswer2.innerHTML = "Это "+regions[mainindex].getAttribute('rightanswer');
-            regions[mainindex].style.fill = "rgb(0, 128, 0)";
-            regions[mainindex].style.opacity = 0.3;
+             switch(clas){
+                case "region": {
+                    regions[mainindex].style.fill = "rgb(0, 128, 0)";
+                    regions[mainindex].style.opacity = 0.3;
+                }
+                break;
+                case "city": {
+                    regions[mainindex].style.fill = "rgb(0, 128, 0)";
+                    regions[mainindex].style.opacity = 0.6;
+                } 
+                break;
+            }
+            flagtry = 0;
             countright++;
             if(localStorage.right<countright || localStorage.right==undefined){
                 localStorage.right=countright;
             }
             break;
         }
+        else if (levenshtein(input, synonyms[i])>0 && levenshtein(input, synonyms[i])<4 && flagtry<3){
+            divanswer1.style.color = "orange";
+            divanswer1.innerHTML="Вы написали с ошибкой. Попробуйте еще раз!";
+            divanswer2.innerHTML="Количество ошибок: "+levenshtein(input, synonyms[i]);
+            divanswer2.innerHTML+=". Осталось попыток: "+(3-flagtry);
+            flagtry++;
+            document.getElementById("ans").focus();
+            return;
+        }
+        else if (levenshtein(input, synonyms[i])==0 && flagtry>0 && flagtry<3){
+            divanswer1.style.color = "orange";
+            divanswer1.innerHTML="Вы отгадали!";
+            divanswer2.innerHTML = "Это "+regions[mainindex].getAttribute('rightanswer');
+             switch(clas){
+                case "region": {
+                    regions[mainindex].style.fill = "rgb(255, 128, 0)";
+                    regions[mainindex].style.opacity = 0.3;
+                }
+                break;
+                case "city": {
+                    regions[mainindex].style.fill = "rgb(255, 128, 0)";
+                    regions[mainindex].style.opacity = 0.6;
+                } 
+                break;
+            }
+            countright++;
+            if(localStorage.right<countright || localStorage.right==undefined){
+                localStorage.right=countright;
+            }
+            flagtry = 0;
+            break;
+        }
+        
+        
         else {
-            if(i == synonyms.length-1 && input != synonyms[i]){
+            if(i == synonyms.length-1 && input != synonyms[i] || flagtry==3){
                 divanswer1.style.color = "red";
                 divanswer1.innerHTML="Вы ошиблись!";
                 divanswer2.innerHTML = "Правильный ответ: "+regions[mainindex].getAttribute('rightanswer');
-                regions[mainindex].style.fill = "rgb(255, 0, 0)";
-                regions[mainindex].style.opacity = 0.3;
+                switch(clas){
+                    case "region": {
+                        regions[mainindex].style.fill = "rgb(255, 0, 0)";
+                        regions[mainindex].style.opacity = 0.3;
+                    }
+                    break;
+                    case "city": {
+                        regions[mainindex].style.fill = "rgb(255, 0, 0)";
+                        regions[mainindex].style.opacity = 0.6;
+                    } 
+                    break;
+                }
+                flagtry = 0;
                 break;
             }
         }
@@ -111,11 +171,29 @@ function shuffle(array) {
     return array;
 }
 
-function Result(){
+function Helpon(click_evt){
+    document.getElementById("help").innerHTML=click_evt.target.getAttribute('rightanswer');
+    if (click_evt.target.getAttribute("class") == "region"){
+        click_evt.target.style.opacity = 0.5;
+    }
+    else click_evt.target.style.opacity = 0.8;
+    $("#help").show();
+    $("#help").css('left',(click_evt.pageX+20)+'px').css('top',(click_evt.pageY+20)+'px');  
     
-    if(localStorage.right== undefined) a=countright;
-    else a = localStorage.right;
-    divresult.innerHTML = "Результат: вы отгадали правильно "+countright+" из "+mainindex+". Ваш лучший результат: "+a;
+    //alert(click_evt.target.getAttribute('rightanswer'));
+}
+function Helpoff(click_evt){
+    if (click_evt.target.getAttribute("class") == "region"){
+        click_evt.target.style.opacity = 0.3;
+    }
+    else click_evt.target.style.opacity = 0.6;
+    $("#help").hide();
+}
+
+function Result(){
+    if(localStorage.right== undefined) res=countright;
+    else res = localStorage.right;
+    divresult.innerHTML = "Результат: вы отгадали "+countright+" из "+mainindex+". Ваш лучший результат: "+res;
     flag=true;
 }
 
@@ -126,7 +204,26 @@ function goMenu(){
     location.href = "start.html";
 }
 
-
+function levenshtein(s1, s2){
+    var m = s1.length;
+    var n = s2.length;
+    var D = [];
+    for (var i = 0; i <= m; i++) {
+        D[i]=[];
+    }
+    D[0][0] = 0;
+    for (var i = 1; i <= n; i++) {
+        D[0][i]=i;
+    }
+    for (var i = 1; i <= m; i++) {
+        D[i][0]=i;
+        for (var j = 1; j <= n; j++) {
+            var cost = (s1.charAt(i - 1) != s2.charAt(j - 1)) ? 1 : 0;
+            D[i][j]=Math.min(D[i - 1][j] + 1, D[i][j - 1] + 1, D[i - 1][j - 1] + cost);
+        }
+    }
+    return D[m][n];
+}
 
 
 
