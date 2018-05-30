@@ -20,10 +20,9 @@ window.onload = function() {
         regions.push(reg[i]);
     }
     for (var i = 0; i<city.length; i++){
-        
         regions.push(city[i]);
     }
-    regions = shuffle(regions);
+    regions = shuffle(regions); //Рандомный массив регионов и городов
     divanswer1 = document.getElementById("answer1");
     divanswer2 = document.getElementById("answer2");
     divresult = document.getElementById("result");
@@ -44,12 +43,12 @@ function Play(){
         Result();
     }
     if (flag){
-        return;
+        return; //остановка игры после заврещения 
     }
     divanswer1.innerHTML="";
     divanswer2.innerHTML="";
     document.getElementById("ans").value="";
-    regions[mainindex].style.fill = "rgb(128, 128, 128)";
+    regions[mainindex].style.fill = "rgb(128, 128, 128)"; //выбирается элемент массива регионов и городов, закрашваясь в серый
     if (regions[mainindex].getAttribute("class") == "region"){
         regions[mainindex].style.opacity = 0.3;
     }
@@ -70,11 +69,11 @@ function checking(evt){
     if (flag)
         return;
     var clas = regions[mainindex].getAttribute("class");
-    var input = document.getElementById("ans").value.toLowerCase();
+    var input = document.getElementById("ans").value.toLowerCase(); //считывается ответ пользователя
     var synonyms = [];
-    synonyms = regions[mainindex].getAttribute("synonym").split(',');
+    synonyms = regions[mainindex].getAttribute("synonym").split(','); //в массив заносятся все синонимы региона/города
     for (var i = 0; i < synonyms.length; i++) {
-        if (levenshtein(input, synonyms[i])==0 && flagtry==0){
+        if (levenshtein(input, synonyms[i])==0 && flagtry==0){ //если слово написано правильно с первой попытки
             divanswer1.style.color = "green";
             divanswer1.innerHTML="Совершенно верно!";
             divanswer2.innerHTML = "Это "+regions[mainindex].getAttribute('rightanswer');
@@ -97,7 +96,7 @@ function checking(evt){
             }
             break;
         }
-        else if (levenshtein(input, synonyms[i])>0 && levenshtein(input, synonyms[i])<4 && flagtry<3){
+        else if (levenshtein(input, synonyms[i])>0 && levenshtein(input, synonyms[i])<4 && flagtry<3){ //если в слове не больше 3 ошибок дается 3 попытки
             divanswer1.style.color = "orange";
             divanswer1.innerHTML="Вы написали с ошибкой. Попробуйте еще раз!";
             divanswer2.innerHTML="Количество ошибок: "+levenshtein(input, synonyms[i]);
@@ -106,7 +105,7 @@ function checking(evt){
             document.getElementById("ans").focus();
             return;
         }
-        else if (levenshtein(input, synonyms[i])==0 && flagtry>0 && flagtry<3){
+        else if (levenshtein(input, synonyms[i])==0 && flagtry>0 && flagtry<3){ //если слово написано правильно не с первой попытки
             divanswer1.style.color = "orange";
             divanswer1.innerHTML="Вы отгадали!";
             divanswer2.innerHTML = "Это "+regions[mainindex].getAttribute('rightanswer');
@@ -132,7 +131,7 @@ function checking(evt){
         
         
         else {
-            if(i == synonyms.length-1 && input != synonyms[i] || flagtry==3){
+            if(i == synonyms.length-1 && input != synonyms[i] || flagtry==3){ //если ответ неверный или ошибок больше 3 от правильного или все попытки исчерпаны
                 divanswer1.style.color = "red";
                 divanswer1.innerHTML="Вы ошиблись!";
                 divanswer2.innerHTML = "Правильный ответ: "+regions[mainindex].getAttribute('rightanswer');
@@ -153,13 +152,13 @@ function checking(evt){
             }
         }
     }
-    mainindex++;
+    mainindex++; //индекс рандомного массива +1
     if (mainindex==regions.length) {
-        flag=true;
+        flag=true; //остановка при окончании рандомного массива
     }
     setTimeout(Play, 2000);
 }
-function shuffle(array) {
+function shuffle(array) { //строит рандомный массив
     var currentIndex = array.length, temporaryValue, randomIndex;
     while (currentIndex!==0) {
         randomIndex = Math.floor(Math.random() * currentIndex);
@@ -171,7 +170,7 @@ function shuffle(array) {
     return array;
 }
 
-function Helpon(click_evt){
+function Helpon(click_evt){ //всплывающие подсказки отгаданных районов/городов
     document.getElementById("help").innerHTML=click_evt.target.getAttribute('rightanswer');
     if (click_evt.target.getAttribute("class") == "region"){
         click_evt.target.style.opacity = 0.5;
@@ -190,7 +189,7 @@ function Helpoff(click_evt){
     $("#help").hide();
 }
 
-function Result(){
+function Result(){ //результат запомниается в локалстороэдж
     if(localStorage.right== undefined) res=countright;
     else res = localStorage.right;
     divresult.innerHTML = "Результат: вы отгадали "+countright+" из "+mainindex+". Ваш лучший результат: "+res;
@@ -204,7 +203,7 @@ function goMenu(){
     location.href = "start.html";
 }
 
-function levenshtein(s1, s2){
+function levenshtein(s1, s2){//редакционное предписание (количество ошибок от правильного слова)
     var m = s1.length;
     var n = s2.length;
     var D = [];

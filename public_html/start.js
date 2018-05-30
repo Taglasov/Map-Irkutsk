@@ -6,8 +6,21 @@
 
 $(function(){
     $("#play").click(goPlay);
+    $("#regime").click(goRegime);
+    
     function goPlay()
     {
-        location.href = "play1.html";
+        if(localStorage.regime == undefined){
+            location.href = "play1.html";
+        }
+        else {
+            if (localStorage.regime=="regime1")
+                location.href = "play1.html";
+            else location.href = "play2.html";
+        }
+    }
+    function goRegime()
+    {
+        location.href = "regime.html";
     }
 });
